@@ -1,0 +1,29 @@
+version: '3.6'
+
+services:
+  app:
+    image: graphql-nplusone:latest
+    build: .
+    env_file: ./.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '4000:4000'
+    command: yarn run start:dev
+
+  db:
+    image: mysql:8
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: r00t
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+
+  adminer:
+    image: adminer:4
+    restart: always
+    ports:
+      - 8080:8080
