@@ -1,14 +1,15 @@
 import { ApolloServer, gql } from 'apollo-server';
+import Knex from 'knex';
 
-const books = [
-  { id: 1, title: 'Cinco Pepitas de Naranja', authorId: 1 },
-  { id: 2, title: 'El Sabueso de los Baskerville', authorId: 1 },
-  { id: 3, title: 'El Signo de los Cuatro', authorId: 1 },
-  { id: 4, title: 'Escándalo en el Bohemia', authorId: 1 },
-  { id: 5, title: 'Estudio en Escarlata', authorId: 1 },
-];
-
-const authors = [{ id: 1, name: 'Sir Arthur Conan Doyle' }];
+const knex = new Knex({
+  client: 'mysql',
+  connection: {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+  },
+});
 
 const typeDefs = gql`
   type Book {
@@ -31,24 +32,35 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    books: () => books,
-    authors: () => authors,
+    books: async () => knex('books').select(),
+    authors: async () => knex('authors').select(),
   },
 
   Book: {
-    author: (book) => {
-      return authors.find(({ id }) => id === book.authorId);
+    author: async (book) => {
+      const data = await knex('authors')
+        .select()
+        .where('id', book.author_id);
+
+      return data[0];
     },
   },
 
   Author: {
-    books: (author) => {
-      return books.filter((book) => book.authorId === author.id);
+    books: async (author) => {
+      const data = await knex('books')
+        .select()
+        .where('author_id', author.id);
+
+      return data;
     },
   },
 };
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+});
 
 (async () => {
   const { url } = await server.listen();
