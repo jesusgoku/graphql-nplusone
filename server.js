@@ -1,5 +1,6 @@
 import { ApolloServer, gql } from 'apollo-server';
 import Knex from 'knex';
+import DataLoader from 'dataloader';
 
 const knex = new Knex({
   client: 'mysql',
@@ -9,6 +10,42 @@ const knex = new Knex({
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
   },
+});
+
+const authorsLoader = new DataLoader(async (keys) => {
+  const authors = await knex('authors')
+    .select()
+    .whereIn('id', keys);
+
+  return keys.reduce((acc, key) => {
+    const author = authors.find((item) => item.id === key);
+
+    acc.push(author);
+
+    return acc;
+  }, []);
+});
+
+const authorBooksLoader = new DataLoader(async (keys) => {
+  const books = await knex('books')
+    .select()
+    .whereIn('author_id', keys);
+
+  const booksByAuthor = books.reduce((acc, item) => {
+    if (item.author_id in acc) {
+      acc[item.author_id].push(item);
+    } else {
+      acc[item.author_id] = [item];
+    }
+
+    return acc;
+  }, {});
+
+  return keys.reduce((acc, key) => {
+    acc.push(booksByAuthor[key]);
+
+    return acc;
+  }, []);
 });
 
 const typeDefs = gql`
@@ -38,21 +75,13 @@ const resolvers = {
 
   Book: {
     author: async (book) => {
-      const data = await knex('authors')
-        .select()
-        .where('id', book.author_id);
-
-      return data[0];
+      return authorsLoader.load(book.author_id);
     },
   },
 
   Author: {
     books: async (author) => {
-      const data = await knex('books')
-        .select()
-        .where('author_id', author.id);
-
-      return data;
+      return authorBooksLoader.load(author.id);
     },
   },
 };
