@@ -12,11 +12,15 @@ module.exports = {
     },
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
     migrations: {
-      tableName: 'knex_migrations'
-    }
+      tableName: 'knex_migrations',
+      directory: './src/migrations',
+    },
+    seeds: {
+      directory: './src/seeds',
+    },
   },
 
   staging: {
@@ -29,11 +33,15 @@ module.exports = {
     },
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
     migrations: {
-      tableName: 'knex_migrations'
-    }
+      tableName: 'knex_migrations',
+      directory: './src/migrations',
+    },
+    seeds: {
+      directory: './src/seeds',
+    },
   },
 
   production: {
@@ -46,11 +54,15 @@ module.exports = {
     },
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
     migrations: {
-      tableName: 'knex_migrations'
-    }
-  }
+      tableName: 'knex_migrations',
+      directory: './src/migrations',
+    },
+    seeds: {
+      directory: './src/seeds',
+    },
+  },
 
 };
