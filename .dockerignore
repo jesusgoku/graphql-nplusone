@@ -1,3 +1,4 @@
+build/
 
 # Created by https://www.gitignore.io/api/macos,linux,visualstudiocode,node,dotenv
 # Edit at https://www.gitignore.io/?templates=macos,linux,visualstudiocode,node,dotenv
@@ -125,7 +126,7 @@ typings/
 # nuxt.js build output
 .nuxt
 
-# react / gatsby 
+# react / gatsby
 public/
 
 # vuepress build output

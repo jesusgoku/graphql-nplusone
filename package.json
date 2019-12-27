@@ -11,7 +11,8 @@
     "poetic": "^1.3.0"
   },
   "scripts": {
-    "start": "node -r esm -r dotenv/config src",
+    "build": "babel -d build src/index.js",
+    "start": "node -r dotenv/config build",
     "start:dev": "nodemon -r esm -r dotenv/config src",
     "code:check": "yarn code:lint; yarn code:format --check",
     "code:clean": "yarn code:lint --fix; yarn code:format --write",
