@@ -21,7 +21,7 @@
     "code:check:rules": "eslint --print-config .eslintrc.js | eslint-config-prettier-check"
   },
   "dependencies": {
-    "apollo-server": "^2.9.14",
+    "apollo-server": "^2.25.4",
     "dataloader": "^2.0.0",
     "dotenv": "^8.2.0",
     "esm": "^3.2.25",
